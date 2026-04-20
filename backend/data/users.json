@@ -1,0 +1,47 @@
+[
+  {
+    "email": "zaz123nce@gmail.com",
+    "password_hash": "14020cf0fc1fd67e5d4cf5f5a1c8e9eb$67e96c95c28ada059efa5370f7f2bed421e02ead462f54daccca755ac78f5ab6",
+    "alert_config": {
+      "enabled": true,
+      "categories": [
+        "GPU",
+        "CPU",
+        "RAM",
+        "SSD"
+      ],
+      "last_initial_sent_at": null,
+      "last_daily_sent_at": null
+    },
+    "created_at": "2026-04-17T10:45:28.383471+00:00"
+  },
+  {
+    "email": "a123nce@gmail.com",
+    "password_hash": "8333b26a9f787c796d91ee899142ffa1$3ba23ad2edc8c794ed1d3c1567e3a194df8117bf6800c5ff772b6f36375a1f7e",
+    "alert_config": {
+      "enabled": true,
+      "categories": [
+        "GPU"
+      ],
+      "last_initial_sent_at": "2026-04-19T09:14:54.566541+00:00",
+      "last_daily_sent_at": null
+    },
+    "created_at": "2026-04-17T11:19:45.798200+00:00"
+  },
+  {
+    "email": "123nce@gmail.com",
+    "password_hash": "0d12d3b6a389034a2437fac5b05ac9f2$b473920cd81ae3bbea57c113e64b9a6b5cfe907c603c91e4976c064cb84da082",
+    "alert_config": {
+      "enabled": false,
+      "categories": [
+        "GPU",
+        "CPU",
+        "RAM",
+        "SSD"
+      ],
+      "last_initial_sent_at": null,
+      "last_daily_sent_at": null
+    },
+    "created_at": "2026-04-18T09:49:46.041528+00:00"
+  }
+]

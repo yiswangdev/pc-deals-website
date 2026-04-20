@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+backend/venv/
+.venv/
+venv/
+
+# Build output
+frontend/.next/
+out/
+dist/
+build/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment files
+.env
+.env.*
+!.env.example
+!frontend/.env.example
+!backend/.env.example
+
+# Vercel
+.vercel/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Git metadata in exports
+.git/
