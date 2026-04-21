@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, Clock, Tag } from "lucide-react";
+import { ExternalLink, Clock } from "lucide-react";
 
 interface DealCardProps {
   id: string;
@@ -33,6 +33,7 @@ const CATEGORY_STYLES: Record<string, { bg: string; text: string; border: string
 function timeAgo(dateString: string) {
   const date = new Date(dateString).getTime();
   if (Number.isNaN(date)) return "UNKNOWN";
+
   const diff = Math.floor((Date.now() - date) / 1000);
   if (diff < 60) return `${diff}s AGO`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m AGO`;
@@ -54,21 +55,22 @@ export default function DealCard({
   summary,
   price,
   image,
+  product_link,
   index = 0,
 }: DealCardProps) {
   const delay = `${Math.min(index * 60, 400)}ms`;
   const imageSrc = image || getFallbackImage(title, category);
   const style = CATEGORY_STYLES[category] ?? CATEGORY_STYLES.Other;
+  const href = product_link || link;
 
   return (
     <Link
-      href={link}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="cyber-card rounded-none overflow-hidden block animate-fade-up opacity-0 hover:-translate-y-0.5 transition-all duration-200"
+      className="relative cyber-card rounded-none overflow-hidden block animate-fade-up opacity-0 hover:-translate-y-0.5 transition-all duration-200"
       style={{ animationDelay: delay, animationFillMode: "forwards" }}
     >
-      {/* Image */}
       <div className="relative w-full h-40 bg-cyber-dark border-b border-cyber-border overflow-hidden">
         <img
           src={imageSrc}
@@ -83,8 +85,7 @@ export default function DealCard({
           }}
         />
 
-        {/* Category badge — solid fill, always readable */}
-        <div className="absolute top-2 left-2">
+        <div className="absolute top-2 left-2 z-10">
           <span
             className={`inline-flex items-center gap-1 px-2 py-1 font-mono text-[10px] font-bold tracking-wider border ${style.bg} ${style.text} ${style.border}`}
           >
@@ -94,15 +95,14 @@ export default function DealCard({
         </div>
 
         {price && (
-          <div className="absolute bottom-2 right-2">
-            <span className="inline-flex items-center border border-cyber-green/50 bg-black/80 px-2 py-1 font-mono text-xs text-cyber-green font-bold">
+          <div className="absolute bottom-2 right-2 z-10">
+            <span className="inline-flex items-center border border-cyber-green/50 bg-black/90 px-2 py-1 font-mono text-xs text-cyber-green font-bold shadow-lg">
               {price}
             </span>
           </div>
         )}
       </div>
 
-      {/* Content */}
       <div className="p-4 space-y-3">
         <div className="min-h-[48px]">
           <h3 className="font-orbitron text-sm text-white tracking-wide leading-5 line-clamp-2">
@@ -121,6 +121,7 @@ export default function DealCard({
             <Clock size={10} />
             {timeAgo(published)}
           </div>
+
           <div className="flex items-center gap-1 font-mono text-[10px] text-cyber-cyan tracking-wider">
             OPEN <ExternalLink size={10} />
           </div>

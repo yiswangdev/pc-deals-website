@@ -26,12 +26,20 @@ interface Deal {
   product_link?: string | null;
 }
 
+interface SourceStatus {
+  name: string;
+  deal_count: number;
+  status: "LIVE" | "INACTIVE";
+  uptime: "ACTIVE" | "INACTIVE";
+}
+
 interface DealsResponse {
   deals: Deal[];
   total: number;
   last_updated: string | null;
   categories: string[];
   sources: string[];
+  source_statuses: SourceStatus[];
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -51,14 +59,22 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [tick, setTick] = useState(0);
+  const [fetchFailed, setFetchFailed] = useState(false);
 
   const fetchDeals = async () => {
     try {
+      setFetchFailed(false);
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deals`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
       const json: DealsResponse = await res.json();
       setData(json);
     } catch (e) {
       console.error("Failed to fetch deals:", e);
+      setFetchFailed(true);
     } finally {
       setLoading(false);
     }
@@ -67,8 +83,18 @@ export default function HomePage() {
   const forceRefresh = async () => {
     setRefreshing(true);
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deals/refresh`, { method: "POST" });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deals/refresh`, {
+        method: "POST",
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
       await fetchDeals();
+    } catch (e) {
+      console.error("Failed to refresh deals:", e);
+      setFetchFailed(true);
     } finally {
       setRefreshing(false);
     }
@@ -97,14 +123,32 @@ export default function HomePage() {
   ).padStart(2, "0")}:${String(tick % 60).padStart(2, "0")}`;
 
   const feedSources = data?.sources ?? [];
+  const feedStatuses = data?.source_statuses ?? [];
+
+  const hasDeals = (data?.total ?? 0) > 0;
+  const hasSync = Boolean(data?.last_updated);
+  const dashboardActive = !loading && !fetchFailed && hasDeals && hasSync;
+
+  const dashboardStatusLabel = dashboardActive ? "● ONLINE" : "● INACTIVE";
+  const dashboardStatusClass = dashboardActive
+    ? "text-cyber-green animate-pulse"
+    : "text-red-400";
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-      {/* ── Page Header ──────────────────────────────────────────── */}
       <div className="animate-fade-up opacity-0" style={{ animationFillMode: "forwards" }}>
         <div className="flex items-center gap-2 mb-1">
-          <Radio size={12} className="text-cyber-green animate-pulse" />
-          <span className="font-mono text-xs text-cyber-green tracking-widest">LIVE DASHBOARD</span>
+          <Radio
+            size={12}
+            className={dashboardActive ? "text-cyber-green animate-pulse" : "text-red-400"}
+          />
+          <span
+            className={`font-mono text-xs tracking-widest ${
+              dashboardActive ? "text-cyber-green" : "text-red-400"
+            }`}
+          >
+            LIVE DASHBOARD
+          </span>
         </div>
         <h1 className="font-orbitron text-2xl sm:text-3xl font-bold text-white tracking-wider">
           SYSTEM <span className="text-cyber-cyan text-glow-cyan">OVERVIEW</span>
@@ -114,7 +158,6 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* ── Stat Widgets ─────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatWidget label="Total Deals" value={loading ? "—" : data?.total ?? 0} sub="across all feeds" accent="cyan" index={0} />
         <StatWidget label="Categories" value={loading ? "—" : topCategories.length} sub="detected" accent="green" index={1} />
@@ -122,7 +165,6 @@ export default function HomePage() {
         <StatWidget label="Uptime" value={uptime} sub="session active" accent="red" index={3} />
       </div>
 
-      {/* ── Main Grid ────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div
           className="cyber-card rounded-none p-5 animate-fade-up opacity-0"
@@ -167,13 +209,15 @@ export default function HomePage() {
             <div className="font-mono text-[10px] text-cyber-muted space-y-1">
               <div>
                 LAST_SYNC:{" "}
-                <span className="text-cyber-green">
+                <span className={hasSync ? "text-cyber-green" : "text-red-400"}>
                   {data?.last_updated
                     ? new Date(data.last_updated).toLocaleTimeString()
                     : "PENDING"}
                 </span>
               </div>
-              <div>STATUS: <span className="text-cyber-green animate-pulse">● ONLINE</span></div>
+              <div>
+                STATUS: <span className={dashboardStatusClass}>{dashboardStatusLabel}</span>
+              </div>
             </div>
           </div>
 
@@ -220,7 +264,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── Feed status bar ──────────────────────────────────────── */}
       <div
         className="cyber-card rounded-none p-4 animate-fade-up opacity-0"
         style={{ animationDelay: "500ms", animationFillMode: "forwards" }}
@@ -229,25 +272,40 @@ export default function HomePage() {
           <Radio size={12} className="text-cyber-cyan" />
           <span className="font-orbitron text-xs tracking-widest text-cyber-cyan">FEED_STATUS</span>
         </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {(loading
-            ? []
-            : feedSources.map((name) => ({ name, status: "LIVE", uptime: "ACTIVE" }))
-          ).map((feed) => (
-            <div
-              key={feed.name}
-              className="flex items-center justify-between border border-cyber-border px-4 py-2"
-            >
-              <div>
-                <div className="font-mono text-xs text-white">{feed.name}</div>
-                <div className="font-mono text-[10px] text-cyber-muted">UPTIME: {feed.uptime}</div>
+          {(loading ? [] : feedStatuses).map((feed) => {
+            const isLive = feed.status === "LIVE";
+
+            return (
+              <div
+                key={feed.name}
+                className="flex items-center justify-between border border-cyber-border px-4 py-2"
+              >
+                <div>
+                  <div className="font-mono text-xs text-white">{feed.name}</div>
+                  <div className="font-mono text-[10px] text-cyber-muted">
+                    UPTIME: {feed.uptime} // DEALS: {feed.deal_count}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      isLive ? "bg-cyber-green animate-pulse" : "bg-red-400"
+                    }`}
+                  />
+                  <span
+                    className={`font-mono text-[10px] ${
+                      isLive ? "text-cyber-green" : "text-red-400"
+                    }`}
+                  >
+                    {feed.status}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyber-green animate-pulse" />
-                <span className="font-mono text-[10px] text-cyber-green">{feed.status}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
