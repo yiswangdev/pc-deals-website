@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 const links = [
   { href: "/", label: "Dashboard", icon: Activity },
   { href: "/deals", label: "Deals", icon: Zap },
-  { href: "/settings", label: "Settings", icon: Settings },
+  // { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export default function Navbar() {
@@ -62,8 +62,8 @@ export default function Navbar() {
           })}
         </ul>
 
-        {/* Right side: status + auth */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* Right side: status + auth (Remove comment after deployment) */}
+        {/* <div className="hidden md:flex items-center gap-3">
           <div className="flex items-center gap-2 font-mono text-xs text-cyber-muted">
             <span className="w-1.5 h-1.5 rounded-full bg-cyber-green animate-pulse inline-block" />
             FEEDS_LIVE
@@ -86,7 +86,7 @@ export default function Navbar() {
               LOGIN
             </Link>
           )}
-        </div>
+        </div> */} 
 
         {/* Mobile menu toggle */}
         <button

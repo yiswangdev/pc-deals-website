@@ -71,7 +71,7 @@ export default function SettingsPage() {
         className="animate-fade-up opacity-0"
         style={{ animationDelay: "100ms", animationFillMode: "forwards" }}
       >
-        <EmailAlertsPanel />
+        {/* <EmailAlertsPanel /> */} //change after deployment
       </div>
     </div>
   );

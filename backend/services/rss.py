@@ -1,23 +1,3 @@
-"""
-PC Deals Scraper – v3
-=====================
-Requirements:
-    pip install curl-cffi praw feedparser
-
-Reddit setup (one-time):
-    1. Go to https://www.reddit.com/prefs/apps -> create a "script" app
-    2. Set env vars:  REDDIT_CLIENT_ID  REDDIT_CLIENT_SECRET  REDDIT_USERNAME
-
-Key architectural changes from v2:
-  - curl_cffi.AsyncSession  - native async HTTP with real Chrome TLS fingerprint
-    (bypasses Cloudflare / bot-detection without a thread-pool executor)
-  - PRAW  - Reddit's official API; no more 403s
-  - asyncio.Semaphore  - caps concurrent connections to avoid overwhelming sources
-  - Circuit breaker  - sources that fail repeatedly are skipped for the rest of the run
-  - Dead sources removed (CamelCamelCamel, Geizhals, Pangoly, PCPrice.watch)
-  - Correct Slickdeals / Newegg / B&H / Best Buy URLs
-"""
-
 from __future__ import annotations
 
 import asyncio
