@@ -185,6 +185,9 @@ NEXT_PUBLIC_API_URL=https://pc-deals-backend.vercel.app/api
 
 ---
 
+
+Note: settings/page.tsx and Navbar is unavailable for now
+
 ## 📄 License
 
 MIT License
