@@ -25,7 +25,21 @@ interface DealsResponse {
 }
 
 const CATEGORIES = ["All", "GPU", "CPU", "RAM", "SSD", "Motherboard", "PSU", "Cooling", "Monitor", "Other"];
-const SORT_OPTIONS = ["Newest", "Oldest", "Category A-Z"];
+const SORT_OPTIONS = [
+  "Newest",
+  "Oldest",
+  "Category A-Z",
+  "Price Low-High",
+  "Price High-Low",
+];
+
+function parsePrice(price?: string | null) {
+  if (!price) return null;
+  const cleaned = price.replace(/[^0-9.]/g, "");
+  if (!cleaned) return null;
+  const value = Number.parseFloat(cleaned);
+  return Number.isFinite(value) ? value : null;
+}
 
 export default function DealsPage() {
   const [data, setData] = useState<DealsResponse | null>(null);
@@ -109,9 +123,40 @@ export default function DealsPage() {
   };
 
   const sortedDeals = [...(data?.deals ?? [])].sort((a, b) => {
-    if (sort === "Newest") return new Date(b.published).getTime() - new Date(a.published).getTime();
-    if (sort === "Oldest") return new Date(a.published).getTime() - new Date(b.published).getTime();
-    if (sort === "Category A-Z") return a.category.localeCompare(b.category);
+    if (sort === "Newest") {
+      return new Date(b.published).getTime() - new Date(a.published).getTime();
+    }
+
+    if (sort === "Oldest") {
+      return new Date(a.published).getTime() - new Date(b.published).getTime();
+    }
+
+    if (sort === "Category A-Z") {
+      return a.category.localeCompare(b.category);
+    }
+
+    if (sort === "Price Low-High") {
+      const aPrice = parsePrice(a.price);
+      const bPrice = parsePrice(b.price);
+
+      if (aPrice === null && bPrice === null) return 0;
+      if (aPrice === null) return 1;
+      if (bPrice === null) return -1;
+
+      return aPrice - bPrice;
+    }
+
+    if (sort === "Price High-Low") {
+      const aPrice = parsePrice(a.price);
+      const bPrice = parsePrice(b.price);
+
+      if (aPrice === null && bPrice === null) return 0;
+      if (aPrice === null) return 1;
+      if (bPrice === null) return -1;
+
+      return bPrice - aPrice;
+    }
+
     return 0;
   });
 
