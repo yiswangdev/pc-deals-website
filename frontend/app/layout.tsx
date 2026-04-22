@@ -31,7 +31,7 @@ export default function RootLayout({
             {/* Footer */}
             <footer className="border-t border-cyber-border py-4 px-6 text-center">
               <span className="font-mono text-xs text-cyber-muted tracking-widest">
-                PCDEALS_SYS // v1.0.0 // FEEDS: LIVE // {new Date().getFullYear()}
+                PCSeekers // v1.0.0 // FEEDS: LIVE // {new Date().getFullYear()}
               </span>
             </footer>
           </div>
