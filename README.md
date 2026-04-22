@@ -1,6 +1,8 @@
 # 🚀 PCDeals
 
-A full-stack web application for discovering and tracking PC hardware deals in real time. Built with **Next.js** and **FastAPI**, and deployed on **Vercel**.
+A full-stack web application for discovering and tracking **PC component deals** in real time. Built with **Next.js** and **FastAPI**, and deployed on **Vercel**.
+
+This app focuses on deals for parts and peripherals such as **GPUs, CPUs, RAM, SSDs, motherboards, power supplies, cooling, and monitors**.
 
 ---
 
@@ -184,9 +186,6 @@ NEXT_PUBLIC_API_URL=https://pc-deals-backend.vercel.app/api
 ```
 
 ---
-
-
-Note: settings/page.tsx and Navbar is unavailable for now
 
 ## 📄 License
 
