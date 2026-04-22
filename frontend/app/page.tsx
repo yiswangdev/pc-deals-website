@@ -112,9 +112,10 @@ export default function HomePage() {
       return acc;
     }, {}) ?? {};
 
-  const topCategories = Object.entries(categoryBreakdown)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
+  const displayedCategories = (data?.categories ?? []).map((cat) => ({
+    name: cat,
+    count: categoryBreakdown[cat] || 0,
+  }));
 
   const recentDeals = data?.deals.slice(0, 6) ?? [];
 
@@ -125,9 +126,8 @@ export default function HomePage() {
   const feedSources = data?.sources ?? [];
   const feedStatuses = data?.source_statuses ?? [];
 
-  const hasDeals = (data?.total ?? 0) > 0;
   const hasSync = Boolean(data?.last_updated);
-  const dashboardActive = !loading && !fetchFailed && hasDeals && hasSync;
+  const dashboardActive = !loading && !fetchFailed && hasSync;
 
   const dashboardStatusLabel = dashboardActive ? "● ONLINE" : "● INACTIVE";
   const dashboardStatusClass = dashboardActive
@@ -159,10 +159,34 @@ export default function HomePage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatWidget label="Total Deals" value={loading ? "—" : data?.total ?? 0} sub="across all feeds" accent="cyan" index={0} />
-        <StatWidget label="Categories" value={loading ? "—" : topCategories.length} sub="detected" accent="green" index={1} />
-        <StatWidget label="Feed Sources" value={loading ? "—" : feedSources.length} sub="RSS endpoints" accent="purple" index={2} />
-        <StatWidget label="Uptime" value={uptime} sub="session active" accent="red" index={3} />
+        <StatWidget
+          label="Total Deals"
+          value={loading ? "—" : data?.total ?? 0}
+          sub="across all feeds"
+          accent="cyan"
+          index={0}
+        />
+        <StatWidget
+          label="Categories"
+          value={loading ? "—" : data?.categories?.length ?? 0}
+          sub="supported"
+          accent="green"
+          index={1}
+        />
+        <StatWidget
+          label="Feed Sources"
+          value={loading ? "—" : feedSources.length}
+          sub="RSS endpoints"
+          accent="purple"
+          index={2}
+        />
+        <StatWidget
+          label="Uptime"
+          value={uptime}
+          sub="session active"
+          accent="red"
+          index={3}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -172,22 +196,30 @@ export default function HomePage() {
         >
           <div className="flex items-center gap-2 mb-4 border-b border-cyber-border pb-3">
             <TrendingUp size={14} className="text-cyber-cyan" />
-            <span className="font-orbitron text-xs tracking-widest text-cyber-cyan">CATEGORY_INDEX</span>
+            <span className="font-orbitron text-xs tracking-widest text-cyber-cyan">
+              CATEGORY_INDEX
+            </span>
           </div>
 
           {loading ? (
             <div className="space-y-3">
-              {[...Array(5)].map((_, i) => <div key={i} className="skeleton h-8 rounded" />)}
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="skeleton h-8 rounded" />
+              ))}
             </div>
           ) : (
             <div className="space-y-2">
-              {topCategories.map(([cat, count]) => {
+              {displayedCategories.map(({ name, count }) => {
                 const pct = Math.round((count / (data?.total || 1)) * 100);
                 return (
-                  <div key={cat} className="group cursor-pointer">
+                  <div key={name} className="group cursor-pointer">
                     <div className="flex justify-between items-center mb-1">
-                      <span className={`font-mono text-xs ${CATEGORY_COLORS[cat] ?? "text-cyber-muted"}`}>
-                        {cat}
+                      <span
+                        className={`font-mono text-xs ${
+                          CATEGORY_COLORS[name] ?? "text-cyber-muted"
+                        }`}
+                      >
+                        {name}
                       </span>
                       <span className="font-mono text-[10px] text-cyber-muted">
                         {count} ({pct}%)
@@ -238,7 +270,9 @@ export default function HomePage() {
           >
             <div className="flex items-center gap-2">
               <Activity size={14} className="text-cyber-cyan" />
-              <span className="font-orbitron text-xs tracking-widest text-cyber-cyan">LATEST_DEALS</span>
+              <span className="font-orbitron text-xs tracking-widest text-cyber-cyan">
+                LATEST_DEALS
+              </span>
             </div>
             <Link
               href="/deals"
@@ -257,8 +291,12 @@ export default function HomePage() {
           {!loading && recentDeals.length === 0 && (
             <div className="cyber-card rounded-none p-12 text-center">
               <Zap size={32} className="text-cyber-muted mx-auto mb-3" />
-              <div className="font-orbitron text-sm text-cyber-muted tracking-wider">NO_DEALS_CACHED</div>
-              <div className="font-mono text-xs text-cyber-muted mt-2">Try forcing a refresh</div>
+              <div className="font-orbitron text-sm text-cyber-muted tracking-wider">
+                NO_DEALS_CACHED
+              </div>
+              <div className="font-mono text-xs text-cyber-muted mt-2">
+                Try forcing a refresh
+              </div>
             </div>
           )}
         </div>
@@ -270,7 +308,9 @@ export default function HomePage() {
       >
         <div className="flex items-center gap-2 mb-3">
           <Radio size={12} className="text-cyber-cyan" />
-          <span className="font-orbitron text-xs tracking-widest text-cyber-cyan">FEED_STATUS</span>
+          <span className="font-orbitron text-xs tracking-widest text-cyber-cyan">
+            FEED_STATUS
+          </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
