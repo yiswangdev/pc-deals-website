@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Settings, Lock, LogIn } from "lucide-react";
-// import EmailAlertsPanel from "@/components/EmailAlertsPanel";
+// import EmailAlertsPanel from "@/components/EmailAlertsPanel"; 
 import { useAuth } from "@/context/AuthContext";
 
 export default function SettingsPage() {
