@@ -4,8 +4,11 @@ import Navbar from "@/components/Navbar";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "PCDeals // Real-Time Component Tracker",
-  description: "Aggregate PC hardware deals from Reddit, Slickdeals, and more.",
+  title: "PCSeekers // Real-Time Component Tracker",
+  description: "Aggregate PC hardware deals from Slickdeals, Micro Center, and more.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
