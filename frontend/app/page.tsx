@@ -117,7 +117,14 @@ export default function HomePage() {
     count: categoryBreakdown[cat] || 0,
   }));
 
-  const recentDeals = data?.deals.slice(0, 6) ?? [];
+  const recentDeals =
+    [...(data?.deals ?? [])]
+      .sort((a, b) => {
+        const aTime = a.published ? new Date(a.published).getTime() : 0;
+        const bTime = b.published ? new Date(b.published).getTime() : 0;
+        return bTime - aTime;
+      })
+      .slice(0, 6);
 
   const uptime = `${String(Math.floor(tick / 3600)).padStart(2, "0")}:${String(
     Math.floor((tick % 3600) / 60)
