@@ -154,7 +154,7 @@ export default function HomePage() {
           SYSTEM <span className="text-cyber-cyan text-glow-cyan">OVERVIEW</span>
         </h1>
         <p className="font-mono text-xs text-cyber-muted mt-1">
-          Real-time PC hardware deal aggregator // Feeds auto-refresh every 60 min
+          Real-time PC hardware deal aggregator | Feeds auto-refresh every 60 min
         </p>
       </div>
 

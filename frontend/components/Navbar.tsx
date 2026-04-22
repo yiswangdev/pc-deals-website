@@ -35,9 +35,9 @@ export default function Navbar() {
             <div className="absolute inset-0 blur-sm bg-cyber-cyan opacity-30 rounded-full" />
           </div>
           <span className="font-orbitron font-bold text-sm tracking-[0.2em] text-cyber-cyan text-glow-cyan animate-flicker">
-            PC<span className="text-white">DEALS</span>
+            PC<span className="text-white">Seekers</span>
           </span>
-          <span className="font-mono text-xs text-cyber-muted hidden sm:block">// SYS_ONLINE</span>
+          <span className="font-mono text-xs text-cyber-muted hidden sm:block">// Developed by Eric Wang</span>
         </Link>
 
         {/* Desktop nav */}
